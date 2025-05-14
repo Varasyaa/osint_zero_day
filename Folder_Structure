@@ -1,0 +1,8 @@
+osint-alert-system/
+│
+├── app.py                # Flask backend
+├── templates/
+│   └── index.html        # Frontend HTML
+├── static/
+│   └── style.css         # Optional styling
+└── requirements.txt
