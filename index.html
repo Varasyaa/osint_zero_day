@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>OSINT Zero-Day Early Warning</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    async function checkThreat() {
+      const ip = document.getElementById("ip").value;
+      const response = await fetch("/api/check", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ip })
+      });
+      const result = await response.json();
+      document.getElementById("result").innerText = result.status;
+      updateChart(result.data);
+    }
+
+    function updateChart(data) {
+      const ctx = document.getElementById("myChart").getContext("2d");
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: ["Harmless", "Malicious", "Suspicious"],
+          datasets: [{
+            label: "Detection",
+            data: [data.harmless, data.malicious, data.suspicious],
+            backgroundColor: ["green", "red", "orange"]
+          }]
+        }
+      });
+    }
+  </script>
+</head>
+<body class="p-6 font-sans">
+  <h1 class="text-xl font-bold">OSINT Zero-Day Warning</h1>
+  <input id="ip" class="border p-2" placeholder="Enter IP / Domain" />
+  <button onclick="checkThreat()" class="bg-blue-500 text-white p-2 rounded">Scan</button>
+  <p id="result" class="mt-4"></p>
+  <canvas id="myChart" width="400" height="200"></canvas>
+</body>
+</html>
