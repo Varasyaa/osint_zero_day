@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Threat Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="p-6">
+  <h1 class="text-2xl font-bold">Threat Scan Dashboard</h1>
+  <table border="1" class="my-4">
+    <thead>
+      <tr>
+        <th>Target</th>
+        <th>Harmless</th>
+        <th>Malicious</th>
+        <th>Suspicious</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for scan in scans %}
+      <tr>
+        <td>{{ scan.target }}</td>
+        <td>{{ scan.result.harmless }}</td>
+        <td>{{ scan.result.malicious }}</td>
+        <td>{{ scan.result.suspicious }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <canvas id="trendChart" width="400" height="200"></canvas>
+
+  <script>
+    const labels = [{% for scan in scans %}"{{ scan.target }}",{% endfor %}];
+    const maliciousData = [{% for scan in scans %}{{ scan.result.malicious }},{% endfor %}];
+
+    const ctx = document.getElementById('trendChart').getContext('2d');
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Malicious Detections',
+          data: maliciousData,
+          borderColor: 'red',
+          fill: false,
+          tension: 0.2
+        }]
+      }
